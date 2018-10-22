@@ -22,7 +22,10 @@ class CountDown extends React.Component {
     digitTxtColor: PropTypes.string,
     timeTxtColor: PropTypes.string,
     timeToShow: PropTypes.array,
-    size: PropTypes.number,
+    width: PropTypes.number,
+    height: PropTypes.number,
+    digitTxtFontSize: PropTypes.number,
+    timeTxtFontSize: PropTypes.number,
     until: PropTypes.number,
     onFinish: PropTypes.func,
     onPress: PropTypes.func,
@@ -59,11 +62,32 @@ class CountDown extends React.Component {
 
   getTimeLeft = () => {
     const {until} = this.state;
+    
+    let seconds = until % 60;
+    if(seconds < 0) {
+      seconds = 0;
+    }
+    
+    let minutes = parseInt(until / 60, 10) % 60;
+    if(minutes < 0) {
+      minutes = 0;
+     }
+     
+    let hours = parseInt(until / (60 * 60), 10) % 24;
+    if(hours < 0) {
+      hours = 0;
+    }
+    
+    let days = parseInt(until / (60 * 60 * 24), 10);
+    if(days < 0) {
+      days = 0;
+    }
+    
     return {
-      seconds: until % 60,
-      minutes: parseInt(until / 60, 10) % 60,
-      hours: parseInt(until / (60 * 60), 10) % 24,
-      days: parseInt(until / (60 * 60 * 24), 10),
+      seconds: seconds,
+      minutes: minutes,
+      hours: hours,
+      days: days,
     };
   };
 
@@ -82,16 +106,16 @@ class CountDown extends React.Component {
   };
 
   renderDigit = (d) => {
-    const {digitBgColor, digitTxtColor, size} = this.props;
+    const {digitBgColor, digitTxtColor, digitTxtFontSize, width, height} = this.props;
     return (
       <View style={[
         styles.digitCont,
         {backgroundColor: digitBgColor},
-        {width: size * 2.3, height: size * 2.6},
+        {width: width, height: height},
       ]}>
         <Text style={[
           styles.digitTxt,
-          {fontSize: size},
+          {fontSize: digitTxtFontSize},
           {color: digitTxtColor}
         ]}>
           {d}
@@ -101,7 +125,7 @@ class CountDown extends React.Component {
   };
 
   renderDoubleDigits = (label, digits) => {
-    const {timeTxtColor, size} = this.props;
+    const {timeTxtColor, timeTxtFontSize} = this.props;
 
     return (
       <View key={label} style={styles.doubleDigitCont}>
@@ -110,7 +134,7 @@ class CountDown extends React.Component {
         </View>
         <Text style={[
           styles.timeTxt,
-          {fontSize: size / 1.8},
+          {fontSize: timeTxtFontSize},
           {color: timeTxtColor},
         ]}>
           {label}
@@ -131,10 +155,10 @@ class CountDown extends React.Component {
         style={styles.timeCont}
         onPress={this.props.onPress}
       >
-        {_.includes(timeToShow, 'D') ? this.renderDoubleDigits('Days', newTime[0]) : null}
-        {_.includes(timeToShow, 'H') ? this.renderDoubleDigits('Hours', newTime[1]) : null}
-        {_.includes(timeToShow, 'M') ? this.renderDoubleDigits('Minutes', newTime[2]) : null}
-        {_.includes(timeToShow, 'S') ? this.renderDoubleDigits('Seconds', newTime[3]) : null}
+        {_.includes(timeToShow, 'D') ? this.renderDoubleDigits('DAYS', newTime[0]) : null}
+        {_.includes(timeToShow, 'H') ? this.renderDoubleDigits('HOURS', newTime[1]) : null}
+        {_.includes(timeToShow, 'M') ? this.renderDoubleDigits('MINS', newTime[2]) : null}
+        {_.includes(timeToShow, 'S') ? this.renderDoubleDigits('SECS', newTime[3]) : null}
       </Component>
     );
   };
@@ -154,7 +178,10 @@ CountDown.defaultProps = {
   timeTxtColor: DEFAULT_TIME_TXT_COLOR,
   timeToShow: DEFAULT_TIME_TO_SHOW,
   until: 0,
-  size: 15,
+  size: 150,
+  height:50,
+  digitTxtFontSize: 16,
+  timeTxtFontSize: 11,
 };
 
 const styles = StyleSheet.create({
